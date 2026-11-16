@@ -1,0 +1,31 @@
+# Datasets: downloaded or built locally (see README). MovieLens and IMDb
+# may not be redistributed.
+data/
+
+# Results, logs and run outputs
+results/
+*.log
+
+# Built on first use by the demo and the library
+demo/saved_models/
+demo/saved_runs/
+
+# Backups and private files
+*.bak*
+STATUS.md
+*.sh
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# OS and editors
+.DS_Store
+.idea/
+.vscode/

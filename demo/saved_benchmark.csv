@@ -1,0 +1,61 @@
+dataset,split,problem,method,queries,reached,averaged_on,expensive,cheap,tables,rows,requests,AWR,TWR,DWR,clock,clock_runs
+acs-income,occupation x education,Associative,Exhaustive (predict everything),40,85,34,642729.5,0.0,161.0,642729.5,161.0,0.946414705882353,0.9820323529411764,0.02254705882352941,13.433333333333332,3
+acs-income,occupation x education,Associative,Proxy ranking (whole lake),40,85,34,6024.705882352941,71630.08823529411,161.0,642729.5,161.0,0.8218411764705883,0.8815352941176471,0.01846470588235294,15.925749999999999,40
+acs-income,occupation x education,Associative,Random source order,40,85,34,140445.58823529413,0.0,36.588235294117645,140445.58823529413,36.588235294117645,0.8386617647058825,0.8913500000000001,0.0369264705882353,5.71475,40
+acs-income,occupation x education,Associative,Static selection (histogram-only),40,85,34,81174.58823529411,0.0,11.558823529411764,81174.58823529411,11.558823529411764,0.8479088235294117,0.8954264705882353,0.03235294117647059,4.23025,40
+acs-income,occupation x education,Associative,Witness,40,85,34,3705.9117647058824,12216.029411764706,4.176470588235294,38744.58823529412,37.088235294117645,0.834935294117647,0.8946088235294117,0.03268235294117647,11.829000000000002,40
+acs-income,occupation x education,Associative,Witness — no incremental consumption,40,85,34,38744.58823529412,657.6470588235294,4.176470588235294,38744.58823529412,37.088235294117645,0.853035294117647,0.8946088235294117,0.0335,2.993,40
+acs-income,occupation x education,Diverse,Exhaustive (predict everything),11,82,3,930589.0,0.0,161.0,930589.0,161.0,0.5055666666666666,1.0,0.5816,851.8033333333333,3
+acs-income,occupation x education,Diverse,Proxy ranking (whole lake),11,45,4,50.0,347722.75,161.0,894108.5,161.0,0.62415,1.0,0.45804999999999996,35.88454545454545,11
+acs-income,occupation x education,Diverse,Random source order,11,0,0,,,,,,,,,2.8327272727272725,11
+acs-income,occupation x education,Diverse,Static selection (histogram-only),11,9,1,5849.0,0.0,2.0,5849.0,2.0,0.55,1.0,0.4533,22.884545454545453,11
+acs-income,occupation x education,Diverse,Witness,11,91,4,160.75,0.0,2.75,963.5,2.75,0.57015,1.0,0.43055000000000004,2.6245454545454545,11
+acs-income,occupation x education,Diverse,Witness — no incremental consumption,11,82,3,1120.6666666666667,0.0,3.0,1120.6666666666667,3.0,0.4120333333333333,1.0,0.4315,2.15,11
+acs-income,state x education,Associative,Exhaustive (predict everything),40,95,38,667785.2105263158,0.0,367.0,667785.2105263158,367.0,0.9569000000000001,0.9956131578947369,0.031434210526315794,24.64,3
+acs-income,state x education,Associative,Proxy ranking (whole lake),40,95,38,5201.8421052631575,106055.42105263157,367.0,667785.2105263158,367.0,0.8208973684210527,0.8669605263157895,0.02236842105263158,12.94325,40
+acs-income,state x education,Associative,Random source order,40,95,38,42409.31578947369,0.0,23.342105263157894,42409.31578947369,23.342105263157894,0.8271421052631579,0.8837684210526318,0.05073421052631579,2.9724999999999997,40
+acs-income,state x education,Associative,Static selection (histogram-only),40,95,38,51967.18421052631,0.0,8.394736842105264,51967.18421052631,8.394736842105264,0.8450026315789474,0.8852289473684213,0.034065789473684216,2.866,40
+acs-income,state x education,Associative,Witness,40,95,38,1288.8157894736842,8834.394736842105,4.105263157894737,35859.86842105263,31.63157894736842,0.8206552631578946,0.8808394736842107,0.03275,6.1835,40
+acs-income,state x education,Associative,Witness — no incremental consumption,40,95,38,35859.86842105263,550.5263157894736,4.105263157894737,35859.86842105263,31.63157894736842,0.8464605263157895,0.8808394736842107,0.03187368421052632,3.43525,40
+acs-income,state x education,Diverse,Exhaustive (predict everything),7,86,5,868324.8,0.0,367.0,868324.8,367.0,0.43276000000000003,1.0,0.5189999999999999,880.5,3
+acs-income,state x education,Diverse,Proxy ranking (whole lake),7,71,5,1940.0,491287.2,367.0,868324.8,367.0,0.6486,1.0,0.43692000000000003,508.4571428571429,7
+acs-income,state x education,Diverse,Random source order,7,0,0,,,,,,,,,2.1957142857142853,7
+acs-income,state x education,Diverse,Static selection (histogram-only),7,43,2,2784.5,0.0,2.0,2784.5,2.0,0.5,1.0,0.45304999999999995,22.034285714285716,7
+acs-income,state x education,Diverse,Witness,7,86,5,106.0,0.0,4.0,828.0,4.0,0.54362,1.0,0.42479999999999996,1.2185714285714284,7
+acs-income,state x education,Diverse,Witness — no incremental consumption,7,86,5,829.6,0.0,4.0,829.6,4.0,0.52918,1.0,0.43312,1.6257142857142857,7
+acs-income,state x occupation,Associative,Exhaustive (predict everything),40,92,37,589458.8108108108,0.0,916.0,589458.8108108108,916.0,0.9306621621621621,0.9675729729729731,0.036710810810810804,30.133333333333336,3
+acs-income,state x occupation,Associative,Proxy ranking (whole lake),40,92,37,1007.027027027027,37583.86486486487,916.0,589458.8108108108,916.0,0.8284972972972974,0.9090108108108108,0.045272972972972975,9.575999999999999,40
+acs-income,state x occupation,Associative,Random source order,40,92,37,73314.56756756757,0.0,107.27027027027027,73314.56756756757,107.27027027027027,0.836564864864865,0.8857297297297297,0.05202432432432433,8.633,40
+acs-income,state x occupation,Associative,Static selection (histogram-only),40,92,37,30021.891891891893,0.0,31.783783783783782,30021.891891891893,31.783783783783782,0.8437621621621623,0.8842297297297298,0.03971621621621622,5.3115,40
+acs-income,state x occupation,Associative,Witness,40,92,37,1870.972972972973,4781.108108108108,5.243243243243243,12069.675675675675,79.08108108108108,0.8283081081081081,0.8917378378378379,0.040689189189189186,18.597749999999998,40
+acs-income,state x occupation,Associative,Witness — no incremental consumption,40,92,37,12069.675675675675,1476.7567567567567,5.243243243243243,12069.675675675675,79.08108108108108,0.8438837837837839,0.8842297297297298,0.037310810810810814,11.38325,40
+acs-income,state x occupation,Diverse,Exhaustive (predict everything),13,100,8,779652.625,0.0,916.0,779652.625,916.0,0.4153625,1.0,0.5365875,771.9633333333335,3
+acs-income,state x occupation,Diverse,Proxy ranking (whole lake),13,77,8,472.5,429352.5,916.0,779652.625,916.0,0.71155,1.0,0.4258125,58.67307692307692,13
+acs-income,state x occupation,Diverse,Random source order,13,0,0,,,,,,,,,2.1946153846153846,13
+acs-income,state x occupation,Diverse,Static selection (histogram-only),13,23,3,4511.666666666667,0.0,2.0,4511.666666666667,2.0,0.5625,1.0,0.49113333333333326,5.598461538461539,13
+acs-income,state x occupation,Diverse,Witness,13,77,8,148.0,0.0,3.375,496.75,3.375,0.5698,1.0,0.43803749999999997,2.3030769230769232,13
+acs-income,state x occupation,Diverse,Witness — no incremental consumption,13,85,8,516.25,0.0,3.5,516.25,3.5,0.5362750000000001,1.0,0.44725,1.9523076923076923,13
+movielens-25m-imdb,genre x decade of release,Associative,Exhaustive (predict everything),7,0,0,,,,,,,,,16.702857142857145,7
+movielens-25m-imdb,genre x decade of release,Associative,Proxy ranking (whole lake),7,0,0,,,,,,,,,642.0600000000001,7
+movielens-25m-imdb,genre x decade of release,Associative,Random source order,7,0,0,,,,,,,,,17.60142857142857,7
+movielens-25m-imdb,genre x decade of release,Associative,Static selection (histogram-only),7,0,0,,,,,,,,,17.087142857142858,7
+movielens-25m-imdb,genre x decade of release,Associative,Witness,7,0,0,,,,,,,,,461.1542857142857,7
+movielens-25m-imdb,genre x decade of release,Associative,Witness — no incremental consumption,7,0,0,,,,,,,,,25.62285714285714,7
+movielens-25m-imdb,genre x decade of release,Diverse,Exhaustive (predict everything),8,62,4,27953.25,0.0,106.0,719482.75,106.0,0.36905,1.0,0.44839999999999997,1163.74125,8
+movielens-25m-imdb,genre x decade of release,Diverse,Proxy ranking (whole lake),8,100,6,80.5,19004.5,106.0,592496.5,106.0,0.5936333333333333,1.0,0.44556666666666667,15.6275,8
+movielens-25m-imdb,genre x decade of release,Diverse,Random source order,8,0,0,,,,,,,,,20.1025,8
+movielens-25m-imdb,genre x decade of release,Diverse,Static selection (histogram-only),8,38,1,93.0,0.0,2.0,1397.0,2.0,0.4286,1.0,0.4048,12.85375,8
+movielens-25m-imdb,genre x decade of release,Diverse,Witness,8,75,6,80.0,0.0,3.3333333333333335,1021.5,3.3333333333333335,0.4972166666666667,1.0,0.44016666666666665,7.1475,8
+movielens-25m-imdb,genre x decade of release,Diverse,Witness — no incremental consumption,8,75,6,92.0,0.0,3.5,1034.0,3.5,0.48056666666666664,1.0,0.45670000000000005,3.38625,8
+movielens-25m-imdb,genre x year of rating,Associative,Exhaustive (predict everything),7,0,0,,,,,,,,,27.525714285714287,7
+movielens-25m-imdb,genre x year of rating,Associative,Proxy ranking (whole lake),7,0,0,,,,,,,,,706.6842857142857,7
+movielens-25m-imdb,genre x year of rating,Associative,Random source order,7,0,0,,,,,,,,,26.201428571428572,7
+movielens-25m-imdb,genre x year of rating,Associative,Static selection (histogram-only),7,0,0,,,,,,,,,28.617142857142856,7
+movielens-25m-imdb,genre x year of rating,Associative,Witness,7,0,0,,,,,,,,,623.5142857142856,7
+movielens-25m-imdb,genre x year of rating,Associative,Witness — no incremental consumption,7,0,0,,,,,,,,,56.33428571428572,7
+movielens-25m-imdb,genre x year of rating,Diverse,Exhaustive (predict everything),7,71,4,25086.75,0.0,281.0,725558.75,281.0,0.43304999999999993,1.0,0.552875,1119.2314285714285,7
+movielens-25m-imdb,genre x year of rating,Diverse,Proxy ranking (whole lake),7,100,5,199.8,20306.4,281.0,649896.6,281.0,0.5583199999999999,1.0,0.47425999999999996,47.15285714285715,7
+movielens-25m-imdb,genre x year of rating,Diverse,Random source order,7,0,0,,,,,,,,,18.639999999999997,7
+movielens-25m-imdb,genre x year of rating,Diverse,Static selection (histogram-only),7,14,1,51.0,0.0,2.0,230.0,2.0,0.6667,1.0,0.4167,4.582857142857143,7
+movielens-25m-imdb,genre x year of rating,Diverse,Witness,7,71,5,89.4,0.0,2.6,400.0,2.6,0.56192,1.0,0.42938,3.0428571428571423,7
+movielens-25m-imdb,genre x year of rating,Diverse,Witness — no incremental consumption,7,71,5,120.6,0.0,2.6,400.0,2.6,0.5655,1.0,0.42384000000000005,1.5814285714285714,7

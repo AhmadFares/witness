@@ -1,0 +1,27 @@
+[server]
+headless = true
+port = 8501
+address = "127.0.0.1"
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#0F766E"
+backgroundColor = "#FAF8F5"
+secondaryBackgroundColor = "#F3F0EA"
+textColor = "#1F1B16"
+linkColor = "#0F766E"
+borderColor = "#E5E1D8"
+showWidgetBorder = true
+baseRadius = "0.6rem"
+buttonRadius = "0.6rem"
+baseFontSize = 15
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+
+[theme.sidebar]
+backgroundColor = "#F3F0EA"
+secondaryBackgroundColor = "#FFFFFF"
