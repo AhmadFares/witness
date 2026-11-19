@@ -92,7 +92,7 @@ def witness_table(T: pd.DataFrame, query, visited: list[str],
         out[a + (PRED_SUFFIX if a in pred else "")] = shown
     by_cols = [a for a in query.predicted if f"_by:{a}" in T.columns]
     if by_cols:
-        out["labelled by"] = [
+        out["predicted by"] = [
             ", ".join(f"{a}: {T.at[i, f'_by:{a}']} ({T.at[i, f'_conf:{a}']:.2f})"
                       for a in by_cols) for i in T.index]
     out["best witness for"] = ["; ".join(best_for[i]) or "—" for i in T.index]

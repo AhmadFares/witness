@@ -81,20 +81,20 @@ def source_label(dataset: str, name: str) -> str:
     return name.replace(" / ", ", ")
 
 
-# The cost of a run: x · cheap calls + y · expensive calls + z · requests to
-# tables. Default prices are orders of magnitude, editable in the interface.
+# The cost of a run: x · cheap predictions + y · expensive predictions + z · table
+# accesses. Default prices are orders of magnitude, editable in the interface.
 COST_UNITS = {
     "Cost ($)": dict(
         x=0.000000001, y=0.00016, column="total ($)", fmt="%.9f",
-        z={"Paid API: $0.005 per call": 0.005,
-           "Sold or approved access: $0.50 per request (illustrative)": 0.5},
+        z={"Paid API: $0.005 per table access": 0.005,
+           "Sold or approved access: $0.50 per table access (illustrative)": 0.5},
         note="y: one LLM call (about 1,000 input tokens at $0.15 per million). "
              "x: a small local model, close to free but never zero. z: depends "
              "on the kind of source."),
     "Time (seconds)": dict(
         x=0.00001, y=2.5, column="total (s)", fmt="%.6f",
-        z={"Fast network: 0.06 s per request (measured)": 0.06,
-           "Restricted: 1 minute per request (illustrative)": 60.0},
+        z={"Fast network: 0.06 s per table access (measured)": 0.06,
+           "Restricted: 1 minute per table access (illustrative)": 60.0},
         note="y: one call to Llama 3.1 (8B) on CPU, measured. x: a small local "
              "model, which takes microseconds. z: depends on the kind of source."),
 }
@@ -129,32 +129,32 @@ USES_CHEAP = {"PTVD",
 # this?" is the first question anyone asks of the comparison.
 VARIANT_HELP = {
     "PTVD":
-        "Picks one table at a time. It asks a few candidate tables for exact counts "
-        "of the stored conditions and for a small sample, labelled by the cheap "
-        "model, and prefers the table where matching rows should come fastest. "
+        "Picks one table at a time. It sends a COUNT(*) query on the stored "
+        "conditions and takes a small sample, predicted by the cheap model, from a "
+        "few candidate tables, and prefers the table where matching rows should come fastest. "
         "Under Diverse it needs no sample: the stored statistics show which table "
-        "closes what the target still lacks. It labels 10 rows at a time and stops "
+        "closes what the target still lacks. It makes expensive predictions in chunks of 10 and stops "
         "as soon as the target is reached.",
     "Proxy ranking (whole lake)":
         "Proxy-based query processing in the style of SUPG: scans every table, "
         "ranks all rows by stored match and then by the cheap model's score, and "
-        "labels them in that order with the expensive model, 10 at a time, until "
+        "makes expensive predictions in that order, in chunks of 10, until "
         "the target is reached.",
     "Random source order":
-        "Scans tables in random order and labels every row it gets, until the "
+        "Scans tables in random order and makes an expensive prediction on every row it gets, until the "
         "target is reached.",
     "Exhaustive (predict everything)":
-        "Scans every table and labels every row that matches at least one stored "
+        "Scans every table and makes an expensive prediction on every row that matches at least one stored "
         "condition: the cost of not choosing at all.",
     "PTVD — no cheap sampling":
         "Witness, but tables are chosen from the stored statistics only, without "
         "the cheap model.",
     "PTVD — no incremental consumption":
-        "Witness, but a chosen table is labelled in full instead of 10 rows at a "
-        "time.",
+        "Witness, but every row of a chosen table gets an expensive prediction, "
+        "instead of chunks of 10.",
     "Static selection (histogram-only)":
         "Tables chosen from the stored statistics only, and every row of a chosen "
-        "table labelled. Removes both of Witness's components.",
+        "table gets an expensive prediction. Removes both of Witness's components.",
 }
 
 NO_SAMPLING = "PTVD — no cheap sampling"

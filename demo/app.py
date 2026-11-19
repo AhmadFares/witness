@@ -100,7 +100,7 @@ def render_answer(rec, lake, dataset: str, coverage: bool = True) -> None:
     q = rec.query
     cols = (["tuple"]
             + [a + (explore.PRED_SUFFIX if a in q.predicted else "") for a in q.all]
-            + ["from table"] + [c for c in ("labelled by",) if c in w.columns])   # provenance first
+            + ["from table"] + [c for c in ("predicted by",) if c in w.columns])   # provenance first
     st.dataframe(style.style_witness(w[cols], q), width="stretch",
                  hide_index=True, height=min(420, 38 + 35 * len(w)))
     st.caption("Teal: a requested value. Amber: a value that was not requested. "
@@ -217,7 +217,7 @@ def sql_explain(claim, stored: bool, diverse: bool, one_per_case: bool, sql: dic
                 "shown with the model's confidence.")
     combos = int(rows.groupby(list(claim.static)).ngroups)
     ours = (f"Witness reaches the target with {n} row{'s' if n != 1 else ''} from {tables}"
-            + (", enough to refute the claim." if claim.text else ".")
+            + (", enough to answer the question." if claim.text else ".")
             if rec.met else
             f"Witness returns {n} row{'s' if n != 1 else ''} from {tables}, short of the target.")
     return (f"A single SQL query scans all {sql['tables']} tables and returns {len(rows)} rows for "
@@ -264,8 +264,7 @@ def render_sql_section(q: dict, lake, expensive, cheap, dataset: str) -> None:
                    "Try other conditions.")
         return
     state["sql_base"] = base
-    opening = (f"A post claims that <b>{claim.text[0].lower() + claim.text[1:]}</b>. "
-               if claim.text else "")
+    opening = (f"<b>{claim.text}</b> " if claim.text else "")
     if not inst.exact:
         st.caption(f"No person in the lake meets every condition with a {label} prediction at "
                    f"confidence ≥ {scenarios.CONFIDENCE:g}, so these five tables hold the people "
@@ -392,8 +391,8 @@ def view_comparison(df, variants, prices_now: dict, x: float, y: float, z: float
             + ["expensive", "sources", "rows shipped", "requests", "cheap"]
             + (["VEv", "CEv"] if diverse else ["AEv"]) + [total])
     st.dataframe(style.style_comparison(ordered[cols]), width="stretch", hide_index=True)
-    st.caption("Expensive and cheap count model calls. Requests count every contact with a "
-               "table, including counts and samples.")
+    st.caption("Expensive and cheap count predictions. Table accesses count every COUNT(*) "
+               "query, sample and scan.")
     with st.expander("What each method does"):
         for name in ordered["variant"].unique():
             text = VARIANT_HELP.get(name.replace("Witness", "PTVD"), "")
@@ -559,11 +558,11 @@ def render_results(records, lake, dataset: str, expensive, cheap, variants, stal
         kind = kind_col.selectbox("Kind of table access", list(prices_now["z"]), key=f"kind_{unit}")
         fmt = prices_now["fmt"]
         with edit_col.popover("Edit prices", width="stretch"):
-            x = st.number_input("x · one cheap call", min_value=0.0, value=prices_now["x"],
+            x = st.number_input("x · one cheap prediction", min_value=0.0, value=prices_now["x"],
                                 step=0.00001, format=fmt, key=f"x_{unit}")
-            y = st.number_input("y · one expensive call", min_value=0.0, value=prices_now["y"],
+            y = st.number_input("y · one expensive prediction", min_value=0.0, value=prices_now["y"],
                                 step=0.00001, format=fmt, key=f"y_{unit}")
-            z = st.number_input("z · one request to a table", min_value=0.0,
+            z = st.number_input("z · one table access", min_value=0.0,
                                 value=prices_now["z"][kind], step=0.0001, format=fmt,
                                 key=f"z_{unit}_{kind}")
             st.caption(prices_now["note"])
@@ -588,7 +587,7 @@ def render_results(records, lake, dataset: str, expensive, cheap, variants, stal
             ("Reached the target", [(n, "yes" if r.met else "no") for n, r in shown]),
             ("Requested values shown" if diverse else "Combinations fully matched",
              [(n, covered(r)) for n, r in shown]),
-            (f"Tables scanned (of {len(lake.sources):,}) / requests",
+            (f"Tables scanned (of {len(lake.sources):,}) / table accesses",
              [(n, f"{r.summary['sources']:,} / {r.summary['sql_queries'] + r.summary['sample_requests']:,}")
               for n, r in shown]),
             ("Expensive predictions", [(n, f"{r.summary['model_invocations']:,}") for n, r in shown]),
@@ -598,7 +597,7 @@ def render_results(records, lake, dataset: str, expensive, cheap, variants, stal
             text = f"{v:.9f}".rstrip("0").rstrip(".")
             return f"\\${text}" if money else f"{text} s"      # escaped: two $ would start a formula
         st.caption(f"Target: {records[0].spec.target_text()}")
-        st.caption(f"Prices used: one expensive prediction {priced(y)}, one request to a table "
+        st.caption(f"Prices used: one expensive prediction {priced(y)}, one table access "
                    f"{priced(z)}, one cheap prediction {priced(x)}. Total cost adds them up.")
     if not any(r.met for r in records):
         st.info("No method reached this target. A Diverse target can be out of reach when the "
@@ -712,7 +711,7 @@ with st.sidebar:
                                format_func=lambda v: style.short_name(v.replace("PTVD", "Witness")))
     variants = ["PTVD"] + competitors + ablations
     if EXHAUSTIVE in variants:
-        st.caption("Exhaustive labels every row of the lake, so it is the slowest run.")
+        st.caption("Exhaustive Prediction makes an expensive prediction on every matching row, so it is the slowest run.")
 
     with st.expander("Settings"):
         ANS = {"theta": "Reach θ",
@@ -807,7 +806,8 @@ if go:
         done = comparison(runs)
         live.dataframe(done.assign(variant=done["variant"].map(style.short_name))
                        [["variant", "met", "expensive", "sources", "requests"]]
-                       .rename(columns={"variant": "method", "met": "reached θ", "sources": "tables scanned"}),
+                       .rename(columns={"variant": "method", "met": "reached θ", "sources": "tables scanned",
+                                        "requests": "table accesses"}),
                        hide_index=True, width="stretch")
     live.empty()
     bar.empty()
@@ -834,7 +834,7 @@ with st.expander("Benchmark · saved results"):
     if here.empty:
         st.info("The saved results for this dataset are not ready yet.")
     else:
-        st.caption("Cheap Proxy and Exhaustive take a long time on this many queries, so every "
+        st.caption("Cheap Proxy and Exhaustive Prediction take a long time on this many queries, so every "
                    "method was run in advance on the same queries and the results are saved: "
                    "opening this panel computes nothing. Each query needs several tables. "
                    "Costs are averages over the queries that both Witness and Cheap Proxy reached.")
@@ -854,9 +854,9 @@ with st.expander("Benchmark · saved results"):
         else:
             st.dataframe(style.style_benchmark(shown), hide_index=True, width="stretch")
             slow = shown[shown.method.str.startswith("Exhaustive")]
-            few = (f" Exhaustive's clock comes from {int(slow.clock_runs.iloc[0])} runs."
+            few = (f" Exhaustive Prediction's clock comes from {int(slow.clock_runs.iloc[0])} runs."
                    if len(slow) and slow.clock_runs.iloc[0] < slow.queries.iloc[0] else "")
             st.caption("Clock is the average wall-clock time of one run, on one CPU core of a lab "
                        "server, with the expensive model really called." + few + " The expensive "
-                       "model here is a fast stand-in. With an LLM at about 2.5 seconds per call, "
+                       "model here is a fast stand-in. With an LLM at about 2.5 seconds per prediction, "
                        "the time would be mostly the expensive predictions.")

@@ -71,7 +71,7 @@ streamlit run demo/app.py
 The dashboard has three parts:
 
 - **Ask**: choose a dataset and its split, then write stored and predicted
-  conditions or start from an example claim.
+  conditions or start from an example question.
 - **Answer**: the witness table and its measures, with a comparison against a
   single SQL query on 5 small tables.
 - **How It Was Found**: Witness against Cheap Proxy, Random Order, Exhaustive

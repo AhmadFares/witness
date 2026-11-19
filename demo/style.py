@@ -21,11 +21,11 @@ NEUTRAL_BAR = "#CFC9BE"
 AWR, TWR, DWR = "AWR", "TWR", "DWR"
 REPEAT = "background-color: #ECE8E0; color: #8A847B; font-weight: 400"   # a row adding nothing new
 SERIES = ["#0D9488", "#5B5BD6", "#D9770B", "#B5478F"]   # checked for colour-blind separation
-SHORT = {"Proxy ranking (whole lake)": "Cheap Proxy", "Random source order": "Random order",
-         "Exhaustive (predict everything)": "Exhaustive",
-         "Witness — no incremental consumption": "Witness, no batches",
-         "Witness — no cheap sampling": "Witness, no sampling",
-         "Static selection (histogram-only)": "Static selection"}
+SHORT = {"Proxy ranking (whole lake)": "Cheap Proxy", "Random source order": "Random Order",
+         "Exhaustive (predict everything)": "Exhaustive Prediction",
+         "Witness — no incremental consumption": "Witness, no chunked prediction",
+         "Witness — no cheap sampling": "Witness, no cheap-model sampling",
+         "Static selection (histogram-only)": "Static source selection"}
 
 # The mark of the tool: a table with one row picked out, the witness.
 LOGO = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 44" width="236" height="44">
@@ -99,6 +99,10 @@ span[data-tag] button, span[data-tag] svg { color: #0F5E57 !important; fill: #0F
 [data-testid="stMultiSelectTagsContainer"] { flex-wrap: wrap !important; overflow: visible !important; row-gap: 3px;
                                              flex: 1 1 0 !important; min-width: 0 !important; }
 [data-testid="stMultiSelectTagsContainer"] > span { max-width: 100%; }
+/* long method names wrap inside their chip instead of being cut */
+[data-testid="stSidebar"] span[data-tag] { height: auto !important; min-height: 24px; padding-top: 2px !important; padding-bottom: 2px !important; }
+[data-testid="stSidebar"] span[data-tag] > span { white-space: normal !important; overflow: visible !important;
+                                                 text-overflow: clip !important; line-height: 1.25; }
 div:has(> [data-testid="stMultiSelectTagsContainer"]) { max-height: none !important; height: auto !important; min-height: 40px; }
 
 /* labels of the controls */
@@ -187,7 +191,7 @@ def style_comparison(df: pd.DataFrame):
     """The comparison table. One quiet emphasis: the Witness row. A run that
     missed the target says so in its own column."""
     df = df.rename(columns={"variant": "method", "rows shipped": "rows scanned",
-                            "sources": "tables scanned",
+                            "sources": "tables scanned", "requests": "table accesses",
                             "AEv": AWR, "VEv": TWR, "CEv": DWR}).copy()
     df["method"] = df["method"].map(short_name)
     if "met" in df.columns:
@@ -205,7 +209,7 @@ def style_comparison(df: pd.DataFrame):
     # One format call: each call without a column list resets the format of
     # every column it does not name.
     fmt = {c: "{:,.0f}" for c in ("expensive", "cheap", "tables scanned", "rows scanned",
-                                  "requests") if c in df.columns}
+                                  "table accesses") if c in df.columns}
     fmt.update({c: f for c, f in ((AWR, "{:.2f}"), (TWR, "{:.2f}"), (DWR, "{:.2f}"),
                                   ("total (s)", "{:,.1f}"), ("total ($)", "{:,.2f}"))
                 if c in df.columns})
@@ -221,7 +225,7 @@ def style_benchmark(df: pd.DataFrame):
              "Static selection (histogram-only)"]
     diverse = df["problem"].iloc[0] == "Diverse"
     keep = {"method": "method", "queries": "queries", "reached": "reached θ %", "expensive": "expensive",
-            "cheap": "cheap", "tables": "tables scanned", "rows": "rows scanned", "requests": "requests",
+            "cheap": "cheap", "tables": "tables scanned", "rows": "rows scanned", "requests": "table accesses",
             **({"TWR": TWR, "DWR": DWR} if diverse else {"AWR": AWR}), "clock": "clock per query (s)"}
     view = df.assign(_o=df["method"].map(lambda m: order.index(m) if m in order else 99)).sort_values("_o")
     view = view[list(keep)].rename(columns=keep)
@@ -232,7 +236,7 @@ def style_benchmark(df: pd.DataFrame):
                 if row["method"] == "Witness" else "background-color: #FFFFFF")
         return [base] * len(row)
 
-    fmt = {c: "{:,.0f}" for c in ("queries", "reached θ %", "expensive", "cheap", "rows scanned", "requests")}
+    fmt = {c: "{:,.0f}" for c in ("queries", "reached θ %", "expensive", "cheap", "rows scanned", "table accesses")}
     fmt.update({"tables scanned": "{:,.1f}", "clock per query (s)": "{:,.1f}"})
     fmt.update({c: "{:.2f}" for c in (AWR, TWR, DWR) if c in view.columns})
     return view.style.apply(row_style, axis=1).format(fmt, na_rep="—")
@@ -286,7 +290,7 @@ def plan_dot(name: str, plan: dict, label_of=lambda s: s, shown: int = 3) -> str
             tested = sum(c["state"] != "skipped" for c in cands)
             how = (f"asked {len(cands)} tables how many rows match<br/>"
                    f"sampled {tested} of them: {st_.get('sampled', 0):,} rows, "
-                   "labelled by the cheap model")
+                   "predicted by the cheap model")
         else:
             how = {"Statistics pick": "chosen from statistics, no model",
                    "Random pick": "chosen at random",
@@ -301,11 +305,11 @@ def plan_dot(name: str, plan: dict, label_of=lambda s: s, shown: int = 3) -> str
                  if ranked else "")
         out.append(f'read{n} [label=<Scan it<br/>{st_["shipped"]:,} rows returned{order}>];')
         if st_["labelled"] < st_["shipped"]:
-            batches = ceil(st_["labelled"] / plan["chunk"])
-            lab = (f'Expensive model labels<br/><b>{st_["labelled"]:,}</b> of {st_["shipped"]:,} rows<br/>'
-                   f'<font point-size="10">{batches} batch{"es" if batches != 1 else ""} of {plan["chunk"]}, then stop</font>')
+            chunks = ceil(st_["labelled"] / plan["chunk"])
+            lab = (f'Expensive predictions<br/>on <b>{st_["labelled"]:,}</b> of {st_["shipped"]:,} rows<br/>'
+                   f'<font point-size="10">{chunks} chunk{"s" if chunks != 1 else ""} of {plan["chunk"]}, then stop</font>')
         else:
-            lab = f'Expensive model labels<br/><b>all {st_["shipped"]:,}</b> rows'
+            lab = f'Expensive predictions<br/>on <b>all {st_["shipped"]:,}</b> rows'
         out.append(f'label{n} [fillcolor="#CCFBF1", color="#0F766E", label=<{lab}>];')
         text, ok = _check(st_, plan)
         last = i == len(steps) - 1
@@ -326,7 +330,7 @@ def plan_dot(name: str, plan: dict, label_of=lambda s: s, shown: int = 3) -> str
         out.append(f'it{n} [shape=plaintext, style="", label=<<b>Iterations {n}&#8211;{len(steps)}</b>>];')
         out.append(f'more{n} [fillcolor="#CCFBF1", color="#0F766E", label=<{len(rest)} more tables scanned<br/>'
                    f'{sum(r["shipped"] for r in rest):,} rows returned, '
-                   f'<b>{sum(r["labelled"] for r in rest):,}</b> labelled>];')
+                   f'<b>{sum(r["labelled"] for r in rest):,}</b> predicted>];')
         text, ok = _check(rest[-1], plan)
         out.append(f'check{n} [fillcolor="{"#DCFCE7" if ok else "#FEF3C7"}", '
                    f'color="{"#15803D" if ok else "#B45309"}", label=<{text}>];')
@@ -369,7 +373,7 @@ def method_bars(df: pd.DataFrame, column: str, title: str, money: bool = False):
     order = list(data.name)
     y = alt.Y("name:N", sort=order, title=None,
               axis=alt.Axis(ticks=False, domain=False, labelColor=INK, labelFontSize=13,
-                            labelLimit=170, labelPadding=10))
+                            labelLimit=240, labelPadding=10))
     x = alt.X("drawn:Q", title=None, axis=None,
               scale=alt.Scale(type="log", domain=[low, high], nice=False, clamp=True))
     tip = [alt.Tooltip("variant:N", title="method"), alt.Tooltip("value:Q", title=title, format=",.4~g"),

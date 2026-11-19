@@ -52,14 +52,14 @@ INCOME_HIGH, INCOME_LOW = {"income": [">50K"]}, {"income": ["<=50K"]}
 AGED = ("age_group", YOUNG)
 OWN = "Build your own query"
 EXAMPLES = {c.text: c for c in [
-    Claim("There is no woman who never attended college and earns more than 50K",
+    Claim("Are there women earning more than 50K who did not attend college?",
           "women who never attended college",
           {"sex": ["Female"], "education": EDUCATION}, INCOME_HIGH, "education", AGED),
-    Claim("There is no never-married person who earns more than 50K",
+    Claim("Are there never-married people earning more than 50K?",
           "never-married people at these education levels",
           {"marital_status": ["Never married"], "education": [HS, SOME, "Associate's"]},
           INCOME_HIGH, "education", AGED),
-    Claim("There is no one with a doctorate who earns 50K or less",
+    Claim("Are there people with a doctorate earning 50K or less?",
           "doctorate holders in these age groups",
           {"education": ["Doctorate"], "age_group": ["35-44", "45-54", "55-64"]},
           INCOME_LOW, "age_group",
